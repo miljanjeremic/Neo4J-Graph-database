@@ -1,0 +1,26 @@
+LOAD CSV WITH HEADERS FROM 'file:///Nis.csv' AS row
+WITH row
+MERGE (p:PMVPSH {name: row.PMVPSH})
+MERGE (tsr:TSR {name: row.TSR})
+MERGE (vp:VP {name: row.VP})
+MERGE (wind:WindSpeed {speed: toFloat(row.WIND_SPEED)})
+MERGE (sunshine:SunshineHours {hours: toFloat(row.SUNSHINE_HOURS)})
+
+CREATE (tsr)-[:AFFECTS_PMVPSH]->(p)
+CREATE (vp)-[:AFFECTS_PMVPSH]->(p)
+CREATE (wind)-[:AFFECTS_PMVPSH]->(p)
+CREATE (sunshine)-[:AFFECTS_PMVPSH]->(p)
+
+RETURN 'Data import successful';
+-
+MATCH (n) RETURN n
+-
+MATCH (p:PMVPSH) RETURN COUNT(p);
+
+- null
+MATCH (p)
+WHERE p.PMVPSH IS NOT NULL
+RETURN AVG(p.PMVPSH);
+
+MATCH (p:PMVPSH) RETURN AVG(p.PMVPSH);
+-
